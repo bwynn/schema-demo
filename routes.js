@@ -42,9 +42,16 @@ module.exports = function(app) {
     });
   });
 
+  // this updates items within the array for the experience property.
+  // this property might have different values, but this example is much
+  // more of a practical application to push new items into an array within
+  // an item in the db
   app.put('/bike', function(req, res) {
+    // find the item by id
     Bike.findOne({_id: req.body.id}, function(err, bike) {
-      Bike.update({_id: req.body.id}, {
+      // update based on model name prop, then $push the req.body.experience value
+      // as determined by the $each value
+      Bike.update({model: req.body.model}, {
         $push: {
           experience: { $each: [req.body.experience]}
         }
@@ -56,6 +63,27 @@ module.exports = function(app) {
         res.json(bike);
       });
     });
-  });
+  }); // ============ THIS EXAMPLE LISTED ABOVE WORKS AS EXPECTED
+
+  // Adding multiple array items need their own body values defined to be able to
+  // push multiple values at once
+  /*app.put('/bike', function(req, res) {
+    // find the item by id
+    Bike.findOne({_id: req.body.id}, function(err, bike) {
+      // update based on model name prop, then $push the req.body.experience value
+      // as determined by the $each value
+      Bike.update({model: req.body.model}, {
+        $push: {
+          experience: { $each: [req.body.experience_1, req.body.experience_2]}
+        }
+      }, function(err, bike) {
+        if (err) {
+          res.send(err);
+        }
+
+        res.json(bike);
+      });
+    });
+  });*/
 
 };
